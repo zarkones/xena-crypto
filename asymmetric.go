@@ -12,6 +12,14 @@ import (
 
 var ErrBadKey = errors.New("failed to parse key")
 
+func GenSecret() (secret []byte, err error) {
+	secret = make([]byte, SECRET_LENGTH)
+	if _, err := rand.Read(secret); err != nil {
+		return nil, err
+	}
+	return secret, nil
+}
+
 func GenPrivKey() (privateKey *rsa.PrivateKey, err error) {
 	return rsa.GenerateKey(rand.Reader, 4096)
 }
