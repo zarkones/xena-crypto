@@ -11,6 +11,7 @@ import (
 )
 
 var ErrBadKey = errors.New("failed to parse key")
+var ErrNilBody = errors.New("key body is nil")
 
 func GenSecret() (secret []byte, err error) {
 	secret = make([]byte, SECRET_LENGTH)
@@ -50,6 +51,9 @@ func PrivKeyToPEM(privKey *rsa.PrivateKey) (pemEncoded string, err error) {
 
 func ImportPrivKeyPEM(spkiPEM []byte) (privKey *rsa.PrivateKey, err error) {
 	body, _ := pem.Decode(spkiPEM)
+	if body == nil {
+		return nil, ErrNilBody
+	}
 	tempPrivKey, err := x509.ParsePKCS8PrivateKey(body.Bytes)
 	if err != nil {
 		return nil, err
@@ -63,6 +67,9 @@ func ImportPrivKeyPEM(spkiPEM []byte) (privKey *rsa.PrivateKey, err error) {
 
 func ImportPubKeyPEM(spkiPEM []byte) (pubKey *rsa.PublicKey, err error) {
 	body, _ := pem.Decode(spkiPEM)
+	if body == nil {
+		return nil, ErrNilBody
+	}
 	tempPubKey, err := x509.ParsePKIXPublicKey(body.Bytes)
 	if err != nil {
 		return nil, err
